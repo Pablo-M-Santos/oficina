@@ -62,16 +62,18 @@ const paginatedData = computed(() => {
       placeholder="Pesquisar..."
       icon="i-lucide-search"
       size="lg"
+      variant="none"
       :ui="{
-        base: 'bg-white dark:bg-white text-gray-600',
+        base: 'bg-white dark:bg-white text-gray-600 border border-gray-200 focus:border-gray-400 gap-2',
       }"
-      class="w-72 min-w-[12ch] rounded-[12px] !bg-white !text-gray-600 border border-gray-200"
+      class="w-72 min-w-[12ch] rounded-[12px] shadow-sm"
       @update:model-value="
         table?.tableApi?.getColumn('email')?.setFilterValue($event)
       "
     />
 
     <div class="flex items-center gap-3">
+      <!-- Status Dropdown -->
       <UDropdownMenu
         :items="
           statusOptions.map((status) => ({
@@ -101,15 +103,15 @@ const paginatedData = computed(() => {
         <UButton
           label="Status"
           trailing-icon="i-lucide-chevron-down"
-          variant="outline"
+          variant="plain"
           :ui="{
-            base: 'bg-white dark:bg-white text-gray-600 dark:text-gray-600 justify-between',
-            rounded: 'rounded-[12px]',
-
-            ring: 'ring-1 ring-gray-200 dark:ring-gray-200 focus-visible:ring-2 focus-visible:ring-primary-500',
+            base: 'bg-white text-[#171717] justify-between',
+            rounded: 'rounded-[15px]',
+            ring: 'ring-1 ring-gray-200 focus-visible:ring-0',
             color: {
               white: {
-                outline: 'ring-gray-200 text-gray-600 hover:bg-gray-50',
+                outline:
+                  'bg-white text-[#171717] ring-gray-200 hover:bg-white hover:text-[#171717]',
               },
             },
           }"
@@ -117,6 +119,7 @@ const paginatedData = computed(() => {
         />
       </UDropdownMenu>
 
+      <!-- Columns Dropdown -->
       <UDropdownMenu
         :items="
           table?.tableApi
@@ -140,20 +143,19 @@ const paginatedData = computed(() => {
       >
         <UButton
           label="Columns"
-          color="neutral"
-          variant="outline"
           trailing-icon="i-lucide-chevron-down"
-          class="min-w-[140px] font-normal !ring-1 !ring-gray-200"
+          variant="plain"
           :ui="{
-            base: 'bg-white dark:bg-white text-gray-600 dark:text-gray-600 justify-between',
-            rounded: 'rounded-[12px]',
-            ring: 'ring-1 ring-gray-200 dark:ring-gray-200',
+            base: 'bg-white text-[#171717] justify-between',
+            rounded: 'rounded-[15px]',
+            ring: 'ring-1 ring-gray-200',
             color: {
               white: {
-                outline: 'ring-gray-200 text-gray-600 hover:bg-gray-50',
+                outline: 'ring-gray-200 text-[#171717]',
               },
             },
           }"
+          class="min-w-[140px] font-normal !ring-1 !ring-gray-200"
         />
       </UDropdownMenu>
     </div>

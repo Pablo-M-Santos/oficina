@@ -46,12 +46,14 @@ const bottomItems = ref<NavigationMenuItem[]>([
     to: "/configuracoes",
   },
 ]);
+
+const notifications = ref(3);
 </script>
 
 <template>
   <div class="flex h-screen">
     <aside
-      class="flex flex-col w-60 h-full bg-[var(--ui-bg)] border-r border-[var(--ui-border)]"
+      class="flex flex-col w-60 h-full bg-[#171717] border-r border-[var(--ui-border)]"
     >
       <div class="flex h-20 items-center gap-3 px-4">
         <UIcon
@@ -79,30 +81,37 @@ const bottomItems = ref<NavigationMenuItem[]>([
       </div>
     </aside>
 
-    <main class="flex flex-1 flex-col overflow-auto bg-[var(--ui-bg)]">
+    <main class="flex flex-1 flex-col overflow-auto bg-white">
       <header
         class="flex h-20 items-center justify-end border-b border-[var(--ui-border)]"
       >
         <div class="flex items-center gap-4 pr-4">
           <button
             type="button"
-            class="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--ui-border)] text-[var(--ui-text)] transition-colors hover:bg-[var(--ui-bg-elevated)]"
+            class="relative flex h-10 w-10 items-center justify-center rounded-full border border-black bg-white text-black transition-colors hover:bg-black hover:text-white"
           >
-            <UIcon name="i-lucide-bell" class="h-5 w-5" />
+            <UIcon
+              name="i-lucide-bell"
+              class="h-5 w-5 text-current transition-colors"
+            />
+
+      
+            <span
+              v-if="notifications > 0"
+                class="absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"
+            >
+              {{ notifications }}
+            </span>
           </button>
 
           <div
-            class="flex items-center gap-3 rounded-xl border border-[var(--ui-border)] px-3 py-2"
+            class="flex items-center gap-3 rounded-xl border border-gray-200 bg-[#171717] px-3 py-2"
           >
             <div class="flex flex-col text-right leading-tight">
-              <span
-                class="text-sm font-semibold text-[var(--ui-text-highlighted)]"
-              >
+              <span class="text-sm font-semibold text-white">
                 Usuário Admin
               </span>
-              <span class="text-xs text-[var(--ui-text-muted)]"
-                >Gerente da Oficina</span
-              >
+              <span class="text-xs text-white">Gerente da Oficina</span>
             </div>
 
             <UAvatar
