@@ -562,13 +562,6 @@ classDiagram
 
 
 
-  %% =========================
-
-  %% RELACIONAMENTOS AJUSTADOS (MANTENDO LÓGICA)
-
-  %% =========================
-
-
 
   Company "1" --> "*" User
 
@@ -624,7 +617,6 @@ classDiagram
 
 
 
-  %% Ajuste importante: um WorkOrderPart pode gerar múltiplos movimentos de estoque (retiradas parciais, devoluções, correções)
 
   WorkOrderPart "1" --> "0..*" StockMovement : gera_saida
 
