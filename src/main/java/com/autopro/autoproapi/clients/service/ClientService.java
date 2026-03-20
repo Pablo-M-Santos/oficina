@@ -3,11 +3,14 @@ package com.autopro.autoproapi.clients.service;
 
 import com.autopro.autoproapi.clients.dto.ClientCreateDTO;
 import com.autopro.autoproapi.clients.dto.ClientResponseDTO;
+import com.autopro.autoproapi.clients.dto.ClientUpdateDTO;
 import com.autopro.autoproapi.clients.model.Client;
 import com.autopro.autoproapi.clients.repository.ClientRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -42,6 +45,47 @@ public class ClientService {
 
         return toResponseDTO(saved);
 
+    }
+
+    public ClientResponseDTO update(UUID id, ClientUpdateDTO updateDTO) {
+        Client client = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+
+        client.setName(updateDTO.getName());
+        client.setEmail(updateDTO.getEmail());
+        client.setPhone(normalize(updateDTO.getPhone()));
+        client.setAddress(updateDTO.getAddress());
+        client.setUpdatedAt(LocalDateTime.now());
+
+        Client saved = repository.save(client);
+
+        return toResponseDTO(saved);
+
+    }
+
+    public void delete(UUID id) {
+        Client client = repository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Clinte não encontrado"));
+
+        client.setIsActive(false);
+        client.setUpdatedAt(LocalDateTime.now());
+
+        repository.save(client);
+    }
+
+    public List<ClientResponseDTO> getAllClients() {
+        List<Client> clients = repository.findByIsActiveTrue();
+
+        return clients.stream()
+                .map(this::toResponseDTO)
+                .toList();
+    }
+
+    public ClientResponseDTO getClientById(UUID id) {
+        Client client = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+
+        return toResponseDTO(client);
     }
 
     private String normalize(String value) {
