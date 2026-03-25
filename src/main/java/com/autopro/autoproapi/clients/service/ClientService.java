@@ -4,68 +4,69 @@ package com.autopro.autoproapi.clients.service;
 import com.autopro.autoproapi.clients.dto.ClientCreateDTO;
 import com.autopro.autoproapi.clients.dto.ClientResponseDTO;
 import com.autopro.autoproapi.clients.dto.ClientUpdateDTO;
+import com.autopro.autoproapi.clients.mapper.ClientMapper;
 import com.autopro.autoproapi.clients.model.Client;
 import com.autopro.autoproapi.clients.repository.ClientRepository;
+import com.autopro.autoproapi.exception.ResourceNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-
+@RequiredArgsConstructor
 @Service
 public class ClientService {
 
     private final ClientRepository repository;
 
-    public ClientService(ClientRepository repository) {
-        this.repository = repository;
-    }
+    private final ClientMapper mapper;
+
 
     public ClientResponseDTO createClient(ClientCreateDTO dto) {
 
         String normalizedCpf = normalize(dto.getCpf());
         String normalizedPhone = normalize(dto.getPhone());
 
-        if (repository.existsByCpf(normalizedCpf)) {
-            throw new IllegalArgumentException("CPF já cadastrado");
-        }
-        Client client =  new Client();
-        client.setName(dto.getName());
-        client.setEmail(dto.getEmail());
-        client.setPhone(normalizedPhone);
-        client.setCpf(normalizedCpf);
-        client.setAddress(dto.getAddress());
+        validateCpfAlreadyExists(normalizedCpf);
 
-        client.setIsActive(true);
-        client.setCreatedAt(LocalDateTime.now());
-        client.setUpdatedAt(LocalDateTime.now());
+        Client client = mapper.toEntity(dto, normalizedCpf, normalizedPhone);
 
         Client saved = repository.save(client);
 
-        return toResponseDTO(saved);
-
+        return mapper.toResponseDTO(saved);
     }
 
-    public ClientResponseDTO update(UUID id, ClientUpdateDTO updateDTO) {
-        Client client = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+    public ClientResponseDTO update(UUID id, ClientUpdateDTO dto) {
+        Client client = findClientOrThrow(id);
 
-        client.setName(updateDTO.getName());
-        client.setEmail(updateDTO.getEmail());
-        client.setPhone(normalize(updateDTO.getPhone()));
-        client.setAddress(updateDTO.getAddress());
+        if (dto.getName() != null) {
+            client.setName(dto.getName());
+        }
+
+        if (dto.getEmail() != null) {
+            client.setEmail(dto.getEmail());
+        }
+
+        if (dto.getPhone() != null) {
+            client.setPhone(normalize(dto.getPhone()));
+        }
+
+        if (dto.getAddress() != null) {
+            client.setAddress(dto.getAddress());
+        }
+
         client.setUpdatedAt(LocalDateTime.now());
 
         Client saved = repository.save(client);
 
-        return toResponseDTO(saved);
-
+        return mapper.toResponseDTO(saved);
     }
 
     public void delete(UUID id) {
-        Client client = repository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Clinte não encontrado"));
+        Client client = findClientOrThrow(id);
 
         client.setIsActive(false);
         client.setUpdatedAt(LocalDateTime.now());
@@ -77,15 +78,14 @@ public class ClientService {
         List<Client> clients = repository.findByIsActiveTrue();
 
         return clients.stream()
-                .map(this::toResponseDTO)
+                .map(mapper::toResponseDTO)
                 .toList();
     }
 
     public ClientResponseDTO getClientById(UUID id) {
-        Client client = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+        Client client = findClientOrThrow(id);
 
-        return toResponseDTO(client);
+        return mapper.toResponseDTO(client);
     }
 
     private String normalize(String value) {
@@ -93,21 +93,16 @@ public class ClientService {
         return value.replaceAll("\\D", "");
     }
 
-    private ClientResponseDTO toResponseDTO(Client client) {
-        ClientResponseDTO dto = new ClientResponseDTO();
 
-        dto.setId(client.getId());
-        dto.setName(client.getName());
-        dto.setEmail(client.getEmail());
-        dto.setPhone(client.getPhone());
-        dto.setCpf(client.getCpf());
-        dto.setAddress(client.getAddress());
-        dto.setIsActive(client.getIsActive());
-        dto.setCreatedAt(client.getCreatedAt());
-        dto.setUpdatedAt(client.getUpdatedAt());
-
-        return dto;
+    private Client findClientOrThrow(UUID id) {
+        return repository.findByIdAndIsActiveTrue(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
     }
 
 
+    private void validateCpfAlreadyExists(String cpf) {
+        if (repository.existsByCpf(cpf)) {
+            throw new IllegalArgumentException("CPF já cadastrado");
+        }
+    }
 }
