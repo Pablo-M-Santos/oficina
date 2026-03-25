@@ -48,7 +48,7 @@ public class VehicleController {
 
     @GetMapping("/{id}")
     public ResponseEntity<VehicleResponseDTO> getById(@PathVariable UUID id) {
-        VehicleResponseDTO vehicle = vehicleService.findById(id);
+        VehicleResponseDTO vehicle = vehicleService.getVehicleById(id);
         return ResponseEntity.ok(vehicle);
     }
 }
