@@ -26,24 +26,19 @@ public class ClientController {
 
     @PostMapping
     public ResponseEntity<ClientResponseDTO> create(@RequestBody @Valid ClientCreateDTO dto) {
-
         ClientResponseDTO response = clientService.createClient(dto);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ClientResponseDTO> update(@PathVariable UUID id, @RequestBody  ClientUpdateDTO dto) {
-
         ClientResponseDTO response = clientService.update(id, dto);
-
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         clientService.delete(id);
-
         return ResponseEntity.noContent().build();
     }
 
@@ -56,8 +51,7 @@ public class ClientController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ClientResponseDTO> getById(@PathVariable UUID id) {
-        ClientResponseDTO client =clientService.getClientById(id);
-
+        ClientResponseDTO client = clientService.getClientById(id);
         return ResponseEntity.ok(client);
     }
 
