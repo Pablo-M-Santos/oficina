@@ -38,12 +38,30 @@ public class VehicleMapper {
     }
 
     public void updateEntity(Vehicle vehicle, VehicleUpdateDTO dto) {
-        vehicle.setBrand(dto.getBrand());
-        vehicle.setModel(dto.getModel());
-        vehicle.setYear(dto.getYear());
-        vehicle.setPlate(dto.getPlate());
-        vehicle.setColor(dto.getColor());
-        vehicle.setMileage(dto.getMileage());
+
+        if (dto.getBrand() != null) {
+            vehicle.setBrand(dto.getBrand());
+        }
+
+        if (dto.getModel() != null) {
+            vehicle.setModel(dto.getModel());
+        }
+
+        if (dto.getYear() != null) {
+            vehicle.setYear(dto.getYear());
+        }
+
+        if (dto.getPlate() != null) {
+            vehicle.setPlate(dto.getPlate());
+        }
+
+        if (dto.getColor() != null) {
+            vehicle.setColor(dto.getColor());
+        }
+
+        if (dto.getMileage() != null) {
+            vehicle.setMileage(dto.getMileage());
+        }
     }
 
 }
